@@ -10,45 +10,49 @@
     in
     {
       packages.${system}.default = pkgs.stdenv.mkDerivation {
-        name = "mondlicons";
+        pname = "mondlicons";
+        version = "0.0.1";
+
         src = ./.;
+
+        nativeBuildInputs = [ ];
+
+        # Disable the automatic icon cache generation hook
+        dontGtkUpdateIconCache = true;
+        # Prevent the hook from dropping the cache if it were generated
+        dontDropIconThemeCache = true;
+
         installPhase = ''
-                    # 1. Create the specific theme folder
-                    mkdir -p $out/share/icons/Mondlicons
-                    cp -r * $out/share/icons/Mondlicons/
+          mkdir -p $out/share/icons/Mondlicons
           
-                    # 2. Generate the metadata file
-                    cat > $out/share/icons/Mondlicons/index.theme <<CONFIG
-          [Icon Theme]
-          Name=Mondlicons
-          Comment=Smooth, vibrant curves.
-          Inherits=Papirus-Dark,Adwaita,hicolor
-          Directories=scalable/apps,48x48/apps,scalable/places,48x48/places
+          # Copy folders
+          cp -r scalable 48x48 $out/share/icons/Mondlicons/
 
-          [scalable/apps]
-          Size=128
-          Type=Scalable
-          MinSize=16
-          MaxSize=512
-          Context=Applications
+          # Fix filenames with spaces (using bash substitution)
+          find $out/share/icons/Mondlicons -name "* *" -print0 | while IFS= read -r -d $'\0' file; do
+            mv "$file" "''${file// /_}"
+          done
 
-          [48x48/apps]
-          Size=48
-          Type=Fixed
-          Context=Applications
+          # Write index.theme
+          cat > $out/share/icons/Mondlicons/index.theme <<THEME
+[Icon Theme]
+Name=Mondlicons
+Comment=Smooth, vibrant curves.
+Inherits=Papirus-Dark,Adwaita,hicolor
+Directories=scalable/apps,48x48/apps
 
-          [scalable/places]
-          Size=128
-          Type=Scalable
-          MinSize=16
-          MaxSize=512
-          Context=Places
+[scalable/apps]
+Size=128
+Type=Scalable
+MinSize=16
+MaxSize=512
+Context=Applications
 
-          [48x48/places]
-          Size=48
-          Type=Fixed
-          Context=Places
-          CONFIG
+[48x48/apps]
+Size=48
+Type=Fixed
+Context=Applications
+THEME
         '';
       };
     };
