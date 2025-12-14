@@ -17,9 +17,8 @@
 
         nativeBuildInputs = [ ];
 
-        # Disable the automatic icon cache generation hook
+        # Attempt to disable the hook
         dontGtkUpdateIconCache = true;
-        # Prevent the hook from dropping the cache if it were generated
         dontDropIconThemeCache = true;
 
         installPhase = ''
@@ -33,7 +32,7 @@
             mv "$file" "''${file// /_}"
           done
 
-          # Write index.theme
+          # Write index.theme - IMPORTANT: No indentation for the content below!
           cat > $out/share/icons/Mondlicons/index.theme <<THEME
 [Icon Theme]
 Name=Mondlicons
