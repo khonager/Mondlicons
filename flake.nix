@@ -12,44 +12,12 @@
       packages.${system}.default = pkgs.stdenv.mkDerivation {
         name = "mondlicons";
         src = ./.;
+
+        # Only copy the specific folders we need to avoid copying .git/flake.nix into the system
         installPhase = ''
-                    # 1. Create the specific theme folder
-                    mkdir -p $out/share/icons/Mondlicons
-                    cp -r * $out/share/icons/Mondlicons/
-          
-                    # 2. Generate the metadata file
-                    cat > $out/share/icons/Mondlicons/index.theme <<CONFIG
-          [Icon Theme]
-          Name=Mondlicons
-          Comment=Smooth, vibrant curves.
-          Inherits=Papirus-Dark,Adwaita,hicolor
-          Directories=scalable/apps,48x48/apps,scalable/places,48x48/places
-
-          [scalable/apps]
-          Size=128
-          Type=Scalable
-          MinSize=16
-          MaxSize=512
-          Context=Applications
-
-          [48x48/apps]
-          Size=48
-          Type=Fixed
-          Context=Applications
-
-          [scalable/places]
-          Size=128
-          Type=Scalable
-          MinSize=16
-          MaxSize=512
-          Context=Places
-
-          [48x48/places]
-          Size=48
-          Type=Fixed
-          Context=Places
-          CONFIG
+          mkdir -p $out/share/icons/Mondlicons
+          cp -r index.theme scalable 48x48 $out/share/icons/Mondlicons/
         '';
       };
-    };
+    }
 }
