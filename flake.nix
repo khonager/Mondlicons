@@ -24,34 +24,14 @@
         installPhase = ''
           mkdir -p $out/share/icons/Mondlicons
           
-          # Copy folders
-          cp -r scalable 48x48 $out/share/icons/Mondlicons/
+          # ✅ Copy the new 240x240 folder, scalable, and your index.theme file
+          cp -r scalable 240x240 48x48 index.theme $out/share/icons/Mondlicons/
 
-          # Fix filenames with spaces (using bash substitution)
-          find $out/share/icons/Mondlicons -name "* *" -print0 | while IFS= read -r -d $'\0' file; do
+          # Fix filenames with spaces
+          find $out/share/icons/Mondlicons -name "* *" -print0 |
+          while IFS= read -r -d $'\0' file; do
             mv "$file" "''${file// /_}"
           done
-
-          # Write index.theme - IMPORTANT: No indentation for the content below!
-          cat > $out/share/icons/Mondlicons/index.theme <<THEME
-[Icon Theme]
-Name=Mondlicons
-Comment=Smooth, vibrant curves.
-Inherits=Papirus-Dark,Adwaita,hicolor
-Directories=scalable/apps,48x48/apps
-
-[scalable/apps]
-Size=128
-Type=Scalable
-MinSize=16
-MaxSize=512
-Context=Applications
-
-[48x48/apps]
-Size=48
-Type=Fixed
-Context=Applications
-THEME
         '';
       };
     };
